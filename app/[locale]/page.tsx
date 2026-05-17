@@ -10,12 +10,14 @@ import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
 import ScrollReveal from "@/components/ScrollReveal";
+import PageLoader from "@/components/PageLoader";
 
 export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const lang: Locale = (locales as readonly string[]).includes(locale) ? (locale as Locale) : defaultLocale;
   return (
     <main className="relative">
+      <PageLoader />
       <ScrollReveal />
       <StructuredData locale={lang} />
       <Header locale={lang} />
