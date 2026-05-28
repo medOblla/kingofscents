@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Locale, getDict } from "@/lib/i18n";
-import { cn } from "@/lib/cn";
 import { SectionHeader } from "./HowItWorks";
+
+const easeLuxe = [0.22, 1, 0.36, 1] as const;
 
 export default function FAQ({ locale }: { locale: Locale }) {
   const f = getDict(locale).faq;
@@ -26,11 +28,26 @@ export default function FAQ({ locale }: { locale: Locale }) {
       />
       <div className="mx-auto max-w-3xl px-5 sm:px-8">
         <SectionHeader eyebrow="FAQ" title={f.title} sub={f.sub} />
-        <ul className="reveal-stagger mt-14 divide-y divide-[color:var(--color-line-soft)] border-y border-[color:var(--color-line-soft)]" style={{ ["--stagger" as string]: "60ms" }}>
+        <motion.ul
+          className="mt-14 divide-y divide-[color:var(--color-line-soft)] border-y border-[color:var(--color-line-soft)]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.06 } },
+          }}
+        >
           {f.items.map((item, i) => {
             const isOpen = open === i;
             return (
-              <li key={i}>
+              <motion.li
+                key={i}
+                variants={{
+                  hidden: { opacity: 0, y: 14 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeLuxe } },
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => setOpen(isOpen ? null : i)}
@@ -40,31 +57,50 @@ export default function FAQ({ locale }: { locale: Locale }) {
                   <span className="font-display text-lg sm:text-xl text-[color:var(--color-ink)] group-hover:text-[color:var(--color-gold)] transition-colors">
                     {item.q}
                   </span>
-                  <span
-                    className={cn(
-                      "shrink-0 mt-1 w-7 h-7 rounded-full border border-[color:var(--color-line)] flex items-center justify-center transition-all duration-500",
-                      isOpen ? "bg-[color:var(--color-gold)] border-[color:var(--color-gold)] rotate-45" : ""
-                    )}
+                  <motion.span
+                    className="shrink-0 mt-1 w-7 h-7 rounded-full border flex items-center justify-center"
+                    animate={{
+                      rotate: isOpen ? 45 : 0,
+                      backgroundColor: isOpen ? "var(--color-gold)" : "rgba(0,0,0,0)",
+                      borderColor: isOpen ? "var(--color-gold)" : "var(--color-line)",
+                    }}
+                    transition={{ type: "spring", stiffness: 360, damping: 22 }}
                   >
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke={isOpen ? "var(--color-bg)" : "currentColor"} strokeWidth="2">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="14"
+                      height="14"
+                      fill="none"
+                      stroke={isOpen ? "var(--color-bg)" : "currentColor"}
+                      strokeWidth="2"
+                    >
                       <path d="M12 5v14M5 12h14" strokeLinecap="round" />
                     </svg>
-                  </span>
+                  </motion.span>
                 </button>
-                <div
-                  className={cn(
-                    "grid transition-all duration-500 ease-[var(--ease-luxe)]",
-                    isOpen ? "grid-rows-[1fr] pb-6 opacity-100" : "grid-rows-[0fr] opacity-0"
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{
+                        height: { duration: 0.45, ease: easeLuxe },
+                        opacity: { duration: 0.3, ease: easeLuxe },
+                      }}
+                      className="overflow-hidden"
+                    >
+                      <p className="text-[color:var(--color-ink-muted)] leading-relaxed pr-12 pb-6">
+                        {item.a}
+                      </p>
+                    </motion.div>
                   )}
-                >
-                  <div className="overflow-hidden">
-                    <p className="text-[color:var(--color-ink-muted)] leading-relaxed pr-12">{item.a}</p>
-                  </div>
-                </div>
-              </li>
+                </AnimatePresence>
+              </motion.li>
             );
           })}
-        </ul>
+        </motion.ul>
       </div>
     </section>
   );

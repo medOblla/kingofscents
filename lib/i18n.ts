@@ -2,6 +2,12 @@ export const locales = ["fr", "en"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "fr";
 
+export type TierCopy = {
+  name: string;
+  tagline: string;
+  perks: string[];
+};
+
 export type Dict = {
   meta: { title: string; description: string };
   nav: { packs: string; perfumes: string; story: string; faq: string; orderNow: string };
@@ -13,9 +19,6 @@ export type Dict = {
     sub: string;
     ctaPrimary: string;
     ctaSecondary: string;
-    bulletA: string;
-    bulletB: string;
-    bulletC: string;
   };
   trust: { secure: string; codAvail: string; delivery: string; authentic: string };
   marquee: string[];
@@ -27,40 +30,24 @@ export type Dict = {
   packs: {
     title: string;
     sub: string;
-    perDecant: string;
-    save: string;
-    chooseCta: string;
     popular: string;
     bestValue: string;
-    items: { id: 2 | 3 | 4; name: string; subtitle: string; price: number; reg: number; perks: string[] }[];
-  };
-  composer: {
-    title: string;
-    subWith: string; // {n}
-    progress: string; // {filled}/{total}
-    addCta: string;
-    addedCta: string;
-    swap: string;
-    summary: string;
-    subtotal: string;
-    shipping: string;
-    shippingFree: string;
-    total: string;
-    proceed: string;
-    selectPackFirst: string;
-    completeYourPack: string;
-    yourPack: string;
-    empty: string;
-    remove: string;
-    family: { fresh: string; oriental: string; woody: string; floral: string; gourmand: string; aquatic: string; spicy: string };
-    filterAll: string;
-    filterBy: string;
-    searchPlaceholder: string;
-    notesLabel: string;
-    forLabel: string;
-    forHim: string;
-    forHer: string;
-    forUnisex: string;
+    viewBundlesCta: string;
+    pickBundleCta: string;
+    selectedCta: string;
+    exploreCta: string;
+    backToBundles: string;
+    bundleNoun: string;
+    fragrancesNoun: string;
+    freeShipping: string;
+    freeDecant: string; // {n} placeholder
+    fromPrefix: string; // "à partir de" / "from"
+    gulfDuoBadge: string;
+    perks: { royal: TierCopy; signature: TierCopy; discovery: TierCopy };
+    bundlesHeading: string; // {tier}
+    bundlesHeadingPickFirst: string;
+    chooseVariant: string;
+    inThisBundle: string;
   };
   checkout: {
     title: string;
@@ -79,6 +66,13 @@ export type Dict = {
     successAgain: string;
     requiredHint: string;
     legal: string;
+    summary: string;
+    subtotal: string;
+    shipping: string;
+    total: string;
+    lockedTitle: string;
+    lockedBody: string;
+    lockedCta: string;
   };
   reviews: {
     title: string;
@@ -113,20 +107,17 @@ export const dict: Record<Locale, Dict> = {
     meta: {
       title: "kingofscents — Le luxe en quelques gouttes | Décants 10ml",
       description:
-        "Composez votre pack de décants de parfums de luxe — 10ml chacun. Sauvage, Baccarat Rouge 540, Tom Ford, Creed. Livraison partout au Maroc, paiement à la livraison.",
+        "Trois tiers de bundles fixes — Royal, Signature, Discovery. Décants 10ml de YSL, Dior, Armani, Lattafa, Afnan. Livraison offerte au Maroc, paiement à la livraison.",
     },
-    nav: { packs: "Packs", perfumes: "Parfums", story: "Notre histoire", faq: "FAQ", orderNow: "Commander" },
+    nav: { packs: "Bundles", perfumes: "Parfums", story: "Notre histoire", faq: "FAQ", orderNow: "Commander" },
     hero: {
-      eyebrow: "Décants 10 ml · Composé à la main au Maroc",
+      eyebrow: "Décants 10 ml · Bundles fixes · Livraison offerte",
       titleA: "Le luxe",
       titleB: "en quelques",
       titleC: "gouttes.",
-      sub: "Découvrez les parfums qui vous obsèdent — Baccarat Rouge 540, Tom Ford, Creed, Dior — sans engager 2 000 DH sur un flacon. Composez votre pack de décants 10 ml, et portez une signature différente chaque jour.",
-      ctaPrimary: "Composer mon pack",
-      ctaSecondary: "Voir les parfums",
-      bulletA: "100% authentiques",
-      bulletB: "Livraison 24–72h",
-      bulletC: "Paiement à la livraison",
+      sub: "Trois tiers. Dix bundles soigneusement composés autour de YSL, Dior, Armani et les meilleurs Gulf. Choisissez votre bundle — recevez votre signature.",
+      ctaPrimary: "Voir les bundles",
+      ctaSecondary: "Notre histoire",
     },
     trust: {
       secure: "Authentiques garantis",
@@ -135,67 +126,57 @@ export const dict: Record<Locale, Dict> = {
       authentic: "Flaconnage premium",
     },
     marquee: [
-      "Baccarat Rouge 540",
-      "Bleu de Chanel",
-      "Tom Ford Tobacco Vanille",
-      "Creed Aventus",
-      "Dior Sauvage Elixir",
-      "Oud for Greatness",
-      "Layton Royal Essence",
-      "Khamrah",
-      "Naxos",
-      "Le Labo Santal 33",
+      "YSL",
+      "Dior",
+      "Emporio Armani",
+      "Afnan",
     ],
     how: {
       title: "Trois pas vers votre signature",
       sub: "Pas de flacon à 2 000 DH. Juste les parfums que vous voulez vraiment porter — en 10 ml.",
       steps: [
-        { title: "Choisissez un pack", body: "2, 3 ou 4 décants. Plus vous en prenez, moins le décant coûte cher." },
-        { title: "Composez votre pack", body: "Sélectionnez vos parfums dans notre catalogue de signatures de luxe." },
+        { title: "Choisissez un tier", body: "Royal, Signature ou Discovery. Plus de parfums, meilleur tarif au décant." },
+        { title: "Choisissez votre bundle", body: "Chaque tier propose des bundles fixes — soigneusement composés." },
         { title: "Recevez et obsédez", body: "Livraison partout au Maroc en 24–72h. Paiement à la livraison." },
       ],
     },
     packs: {
-      title: "Choisissez votre pack",
-      sub: "Tous les décants sont en flacon de 10 ml avec spray brumisateur — environ 100 vaporisations.",
-      perDecant: "par décant",
-      save: "Économisez",
-      chooseCta: "Choisir ce pack",
+      title: "Choisissez votre bundle",
+      sub: "Trois tiers — Royal, Signature, Discovery. Tous les décants en 10 ml avec spray brumisateur.",
       popular: "Le plus choisi",
       bestValue: "Meilleur rapport",
-      items: [
-        { id: 2, name: "Le Duo", subtitle: "Deux signatures pour rythmer la semaine", price: 180, reg: 240, perks: ["2 décants 10 ml", "Pochette de transport", "Livraison offerte dès 250 DH"] },
-        { id: 3, name: "Le Trio", subtitle: "Le pack le plus choisi — variez selon l'humeur", price: 250, reg: 360, perks: ["3 décants 10 ml", "Pochette de transport", "Livraison offerte"] },
-        { id: 4, name: "Le Quatuor", subtitle: "Une garde-robe olfactive complète", price: 310, reg: 480, perks: ["4 décants 10 ml", "Pochette de transport", "Livraison offerte", "Carte d'olfaction offerte"] },
-      ],
-    },
-    composer: {
-      title: "Composez votre pack",
-      subWith: "Choisissez exactement {n} parfums parmi notre sélection.",
-      progress: "{filled} sur {total} parfums",
-      addCta: "Ajouter",
-      addedCta: "Ajouté",
-      swap: "Remplacer",
-      summary: "Votre pack",
-      subtotal: "Sous-total",
-      shipping: "Livraison",
-      shippingFree: "Offerte",
-      total: "Total",
-      proceed: "Passer à la caisse",
-      selectPackFirst: "Sélectionnez un pack ci-dessus pour commencer.",
-      completeYourPack: "Complétez votre pack pour continuer",
-      yourPack: "Votre pack",
-      empty: "Aucun parfum sélectionné",
-      remove: "Retirer",
-      family: { fresh: "Frais", oriental: "Oriental", woody: "Boisé", floral: "Floral", gourmand: "Gourmand", aquatic: "Aquatique", spicy: "Épicé" },
-      filterAll: "Tous",
-      filterBy: "Filtrer par famille",
-      searchPlaceholder: "Rechercher un parfum…",
-      notesLabel: "Notes",
-      forLabel: "Pour",
-      forHim: "Lui",
-      forHer: "Elle",
-      forUnisex: "Mixte",
+      viewBundlesCta: "Voir les bundles",
+      pickBundleCta: "Choisir ce bundle",
+      selectedCta: "Sélectionné",
+      exploreCta: "Découvrir",
+      backToBundles: "Retour aux bundles",
+      chooseVariant: "Choisissez votre bundle",
+      inThisBundle: "Dans ce bundle",
+      bundleNoun: "Bundle",
+      fragrancesNoun: "parfums",
+      freeShipping: "Livraison offerte",
+      freeDecant: "+ décant mystère {n} ml offert",
+      fromPrefix: "à partir de",
+      gulfDuoBadge: "Duo Gulf",
+      perks: {
+        royal: {
+          name: "Royal",
+          tagline: "Quatre signatures. Le couronnement.",
+          perks: ["4 × décants 10 ml", "+ décant mystère 5 ml offert", "Livraison offerte", "Pochette de transport"],
+        },
+        signature: {
+          name: "Signature",
+          tagline: "Trois parfums pour rythmer la semaine.",
+          perks: ["3 × décants 10 ml", "+ décant mystère 2,5 ml offert", "Livraison offerte", "Pochette de transport"],
+        },
+        discovery: {
+          name: "Discovery",
+          tagline: "Deux parfums. Le pari malin.",
+          perks: ["2 × décants 10 ml", "Livraison offerte", "Pochette de transport"],
+        },
+      },
+      bundlesHeading: "Bundles {tier}",
+      bundlesHeadingPickFirst: "Choisissez un tier ci-dessus pour découvrir les bundles.",
     },
     checkout: {
       title: "Finaliser la commande",
@@ -211,40 +192,47 @@ export const dict: Record<Locale, Dict> = {
       placing: "Envoi en cours…",
       successTitle: "Commande reçue.",
       successBody: "Notre équipe vous contactera sur WhatsApp dans l'heure pour confirmer.",
-      successAgain: "Composer un autre pack",
+      successAgain: "Voir d'autres bundles",
       requiredHint: "Tous les champs sont requis.",
       legal: "En commandant, vous acceptez nos conditions et politique de confidentialité.",
+      summary: "Récapitulatif",
+      subtotal: "Sous-total",
+      shipping: "Livraison",
+      total: "Total",
+      lockedTitle: "Choisissez un bundle pour continuer.",
+      lockedBody: "Le formulaire de commande s'activera dès qu'un bundle sera sélectionné.",
+      lockedCta: "Voir les bundles",
     },
     reviews: {
       title: "Adopté par les exigeants",
-      sub: "Plus de 4 200 packs livrés à travers le Maroc.",
+      sub: "Plus de 4 200 bundles livrés à travers le Maroc.",
       items: [
-        { name: "Yasmine", city: "Casablanca", quote: "Enfin essayer Baccarat Rouge 540 sans flipper sur le prix. Le décant tient une journée entière. J'ai déjà recommandé le Trio." },
+        { name: "Yasmine", city: "Casablanca", quote: "Enfin essayer Y de YSL sans flipper sur le prix. Le décant tient une journée entière. J'ai déjà recommandé le Signature." },
         { name: "Hamza", city: "Rabat", quote: "Le packaging est sérieux, les parfums authentiques. Livré en 36 heures. Je change de signature selon l'occasion." },
-        { name: "Salma", city: "Marrakech", quote: "Idée brillante. J'ai composé un pack mixte pour mon mari et moi — chacun deux décants. Service impeccable." },
+        { name: "Salma", city: "Marrakech", quote: "Idée brillante. Bundle Royal pour mon mari, Discovery pour moi. Service impeccable." },
         { name: "Mehdi", city: "Tanger", quote: "Les 10 ml durent un bon mois en porté quotidien. Bien plus malin que de claquer 1 800 DH sur un flacon qu'on n'aime plus." },
       ],
     },
     faq: {
       title: "Questions fréquentes",
-      sub: "Tout ce qu'il faut savoir avant de composer.",
+      sub: "Tout ce qu'il faut savoir avant de commander.",
       items: [
         { q: "Vos parfums sont-ils authentiques ?", a: "Oui. Nous achetons les flacons originaux directement auprès des distributeurs autorisés et nous les reconditionnons à la main dans des décants pharmaceutiques avec spray. Aucun mélange, aucune dilution." },
         { q: "Combien de vaporisations dans un décant 10 ml ?", a: "Environ 100 vaporisations — soit 1 à 2 mois en porté quotidien selon votre habitude." },
         { q: "Quel est le délai de livraison ?", a: "24 à 72 heures partout au Maroc. Casablanca et Rabat généralement le lendemain." },
-        { q: "Comment payer ?", a: "Paiement à la livraison en espèces. Le livreur vous remet le pack, vous vérifiez, vous payez." },
+        { q: "Comment payer ?", a: "Paiement à la livraison en espèces. Le livreur vous remet le bundle, vous vérifiez, vous payez." },
+        { q: "Qu'est-ce que le décant mystère ?", a: "Royal et Signature incluent un décant cadeau, sélectionné par notre équipe parmi les nouveautés. Une belle surprise à chaque commande." },
         { q: "Puis-je retourner si le parfum ne me plaît pas ?", a: "Pour des raisons d'hygiène, les décants ouverts ne sont pas repris. Si le décant arrive endommagé, nous le remplaçons immédiatement." },
-        { q: "Puis-je mélanger pour homme et pour femme dans un même pack ?", a: "Évidemment. C'est même l'idée — composez selon vos envies." },
       ],
     },
     story: {
       eyebrow: "Notre obsession",
       title: "Le parfum de luxe, démocratisé.",
-      body: "kingofscents est né d'une idée simple : à Casablanca comme à Marrakech, on aime les belles choses — mais un flacon de Baccarat Rouge à 2 200 DH, c'est une décision. Alors on décante. À la main, dans des flacons pharmaceutiques de qualité, à partir de bouteilles 100% authentiques. Vous portez le même parfum — vous payez ce qui est juste.",
-      line1Label: "Décants livrés",
+      body: "kingofscents est né d'une idée simple : à Casablanca comme à Marrakech, on aime les belles choses — mais un flacon à 1 800 DH, c'est une décision. Alors on décante. À la main, dans des flacons pharmaceutiques de qualité, à partir de bouteilles 100% authentiques. Vous portez le même parfum — vous payez ce qui est juste.",
+      line1Label: "Bundles livrés",
       line1Value: "4 200+",
-      line2Label: "Parfums au catalogue",
-      line2Value: "30+",
+      line2Label: "Bundles disponibles",
+      line2Value: "10",
       line3Label: "Note moyenne",
       line3Value: "4.9 / 5",
     },
@@ -258,20 +246,17 @@ export const dict: Record<Locale, Dict> = {
     meta: {
       title: "kingofscents — Luxury fragrances, decanted | 10ml decants",
       description:
-        "Build your pack of luxury fragrance decants — 10ml each. Sauvage, Baccarat Rouge 540, Tom Ford, Creed. Delivered across Morocco, cash on delivery.",
+        "Three tiers of fixed bundles — Royal, Signature, Discovery. 10ml decants of YSL, Dior, Armani, Lattafa, Afnan. Free shipping across Morocco, cash on delivery.",
     },
-    nav: { packs: "Packs", perfumes: "Fragrances", story: "Our story", faq: "FAQ", orderNow: "Order now" },
+    nav: { packs: "Bundles", perfumes: "Fragrances", story: "Our story", faq: "FAQ", orderNow: "Order now" },
     hero: {
-      eyebrow: "10 ml decants · Hand-poured in Morocco",
+      eyebrow: "10 ml decants · Fixed bundles · Free shipping",
       titleA: "Luxury",
       titleB: "by the",
       titleC: "drop.",
-      sub: "Wear the fragrances you actually obsess over — Baccarat Rouge 540, Tom Ford, Creed, Dior — without dropping 2,000 DH on a full bottle. Compose your pack of 10 ml decants and wear a different signature every day.",
-      ctaPrimary: "Build my pack",
-      ctaSecondary: "Browse fragrances",
-      bulletA: "100% authentic",
-      bulletB: "24–72h delivery",
-      bulletC: "Cash on delivery",
+      sub: "Three tiers. Ten curated bundles built around YSL, Dior, Armani and the best Gulf scents. Pick a bundle — wear your signature.",
+      ctaPrimary: "See the bundles",
+      ctaSecondary: "Our story",
     },
     trust: {
       secure: "Guaranteed authentic",
@@ -280,67 +265,57 @@ export const dict: Record<Locale, Dict> = {
       authentic: "Premium glass + atomizer",
     },
     marquee: [
-      "Baccarat Rouge 540",
-      "Bleu de Chanel",
-      "Tom Ford Tobacco Vanille",
-      "Creed Aventus",
-      "Dior Sauvage Elixir",
-      "Oud for Greatness",
-      "Layton Royal Essence",
-      "Khamrah",
-      "Naxos",
-      "Le Labo Santal 33",
+      "YSL",
+      "Dior",
+      "Emporio Armani",
+      "Afnan",
     ],
     how: {
       title: "Three steps to your signature",
       sub: "No 2,000 DH bottle commitment. Just the scents you actually want to wear — in 10 ml.",
       steps: [
-        { title: "Pick a pack", body: "2, 3, or 4 decants. The bigger the pack, the cheaper each decant gets." },
-        { title: "Compose it", body: "Hand-pick your fragrances from our curated catalog of luxury signatures." },
+        { title: "Pick a tier", body: "Royal, Signature, or Discovery. More fragrances, better price per decant." },
+        { title: "Pick your bundle", body: "Each tier offers fixed bundles — carefully curated." },
         { title: "Receive & obsess", body: "Delivered anywhere in Morocco in 24–72h. Pay on delivery." },
       ],
     },
     packs: {
-      title: "Choose your pack",
-      sub: "Every decant is 10 ml in pharma-grade glass with atomizer — about 100 sprays.",
-      perDecant: "per decant",
-      save: "Save",
-      chooseCta: "Pick this pack",
+      title: "Choose your bundle",
+      sub: "Three tiers — Royal, Signature, Discovery. Every decant is 10 ml in pharma-grade glass with atomizer.",
       popular: "Most chosen",
       bestValue: "Best value",
-      items: [
-        { id: 2, name: "The Duo", subtitle: "Two signatures to set the week", price: 180, reg: 240, perks: ["2× 10 ml decants", "Travel pouch", "Free shipping over 250 DH"] },
-        { id: 3, name: "The Trio", subtitle: "Our most popular — match the mood", price: 250, reg: 360, perks: ["3× 10 ml decants", "Travel pouch", "Free shipping"] },
-        { id: 4, name: "The Quartet", subtitle: "A full fragrance wardrobe", price: 310, reg: 480, perks: ["4× 10 ml decants", "Travel pouch", "Free shipping", "Free scent card"] },
-      ],
-    },
-    composer: {
-      title: "Compose your pack",
-      subWith: "Pick exactly {n} fragrances from our curated catalog.",
-      progress: "{filled} of {total} fragrances",
-      addCta: "Add",
-      addedCta: "Added",
-      swap: "Swap",
-      summary: "Your pack",
-      subtotal: "Subtotal",
-      shipping: "Shipping",
-      shippingFree: "Free",
-      total: "Total",
-      proceed: "Proceed to checkout",
-      selectPackFirst: "Select a pack above to start composing.",
-      completeYourPack: "Complete your pack to continue",
-      yourPack: "Your pack",
-      empty: "No fragrance selected yet",
-      remove: "Remove",
-      family: { fresh: "Fresh", oriental: "Oriental", woody: "Woody", floral: "Floral", gourmand: "Gourmand", aquatic: "Aquatic", spicy: "Spicy" },
-      filterAll: "All",
-      filterBy: "Filter by family",
-      searchPlaceholder: "Search a fragrance…",
-      notesLabel: "Notes",
-      forLabel: "For",
-      forHim: "Him",
-      forHer: "Her",
-      forUnisex: "Unisex",
+      viewBundlesCta: "View bundles",
+      pickBundleCta: "Pick this bundle",
+      selectedCta: "Selected",
+      exploreCta: "Explore",
+      backToBundles: "Back to bundles",
+      chooseVariant: "Pick your bundle",
+      inThisBundle: "In this bundle",
+      bundleNoun: "Bundle",
+      fragrancesNoun: "fragrances",
+      freeShipping: "Free shipping",
+      freeDecant: "+ free {n} ml mystery decant",
+      fromPrefix: "from",
+      gulfDuoBadge: "Gulf Duo",
+      perks: {
+        royal: {
+          name: "Royal",
+          tagline: "Four signatures. The crown jewel.",
+          perks: ["4 × 10 ml decants", "+ free 5 ml mystery decant", "Free shipping", "Travel pouch"],
+        },
+        signature: {
+          name: "Signature",
+          tagline: "Three fragrances to set the week.",
+          perks: ["3 × 10 ml decants", "+ free 2.5 ml mystery decant", "Free shipping", "Travel pouch"],
+        },
+        discovery: {
+          name: "Discovery",
+          tagline: "Two fragrances. The smart bet.",
+          perks: ["2 × 10 ml decants", "Free shipping", "Travel pouch"],
+        },
+      },
+      bundlesHeading: "{tier} bundles",
+      bundlesHeadingPickFirst: "Pick a tier above to see its bundles.",
     },
     checkout: {
       title: "Place your order",
@@ -356,40 +331,47 @@ export const dict: Record<Locale, Dict> = {
       placing: "Sending…",
       successTitle: "Order received.",
       successBody: "Our team will contact you on WhatsApp within the hour to confirm.",
-      successAgain: "Build another pack",
+      successAgain: "Browse other bundles",
       requiredHint: "All fields are required.",
       legal: "By ordering you agree to our terms and privacy policy.",
+      summary: "Order summary",
+      subtotal: "Subtotal",
+      shipping: "Shipping",
+      total: "Total",
+      lockedTitle: "Pick a bundle to continue.",
+      lockedBody: "The order form will activate as soon as you pick a bundle.",
+      lockedCta: "Browse bundles",
     },
     reviews: {
       title: "Trusted by the picky",
-      sub: "4,200+ packs shipped across Morocco.",
+      sub: "4,200+ bundles shipped across Morocco.",
       items: [
-        { name: "Yasmine", city: "Casablanca", quote: "Finally got to try Baccarat Rouge 540 without sweating over the price. The decant lasts a full day. Already reordered the Trio." },
+        { name: "Yasmine", city: "Casablanca", quote: "Finally got to try YSL Y without sweating over the price. The decant lasts a full day. Already reordered the Signature." },
         { name: "Hamza", city: "Rabat", quote: "Packaging is serious, fragrances are authentic. Delivered in 36 hours. I switch signatures by the occasion now." },
-        { name: "Salma", city: "Marrakech", quote: "Brilliant idea. Built a mixed pack for me and my husband — two decants each. Service was flawless." },
+        { name: "Salma", city: "Marrakech", quote: "Brilliant idea. Royal bundle for my husband, Discovery for me. Service was flawless." },
         { name: "Mehdi", city: "Tangier", quote: "10 ml lasts me a solid month of daily wear. Way smarter than blowing 1,800 DH on a bottle you'll get tired of." },
       ],
     },
     faq: {
       title: "Frequently asked",
-      sub: "Everything you need to know before composing.",
+      sub: "Everything you need to know before ordering.",
       items: [
         { q: "Are your fragrances authentic?", a: "Yes. We buy original bottles directly from authorized distributors and hand-decant them into pharma-grade vials with atomizers. No mixing, no dilution." },
         { q: "How many sprays in a 10 ml decant?", a: "About 100 sprays — roughly 1 to 2 months of daily wear depending on use." },
         { q: "How long is delivery?", a: "24 to 72 hours anywhere in Morocco. Usually next-day in Casablanca and Rabat." },
-        { q: "How do I pay?", a: "Cash on delivery. The courier hands you the pack, you inspect it, then pay." },
+        { q: "How do I pay?", a: "Cash on delivery. The courier hands you the bundle, you inspect it, then pay." },
+        { q: "What is the mystery decant?", a: "Royal and Signature include a bonus decant, picked by our team from our latest arrivals. A little surprise with every order." },
         { q: "Can I return if I don't like a scent?", a: "For hygiene reasons, opened decants are not refundable. If a decant arrives damaged we replace it immediately." },
-        { q: "Can I mix men's and women's in one pack?", a: "Of course — that's the whole point. Compose by mood, not by aisle." },
       ],
     },
     story: {
       eyebrow: "Our obsession",
       title: "Luxury fragrance, democratized.",
-      body: "kingofscents was born from a simple idea: in Casablanca and Marrakech we love beautiful things — but a 2,200 DH bottle of Baccarat Rouge is a decision. So we decant. By hand, into premium pharma glass, from 100% authentic bottles. Same fragrance — fair price.",
-      line1Label: "Decants shipped",
+      body: "kingofscents was born from a simple idea: in Casablanca and Marrakech we love beautiful things — but a 1,800 DH bottle is a decision. So we decant. By hand, into premium pharma glass, from 100% authentic bottles. Same fragrance — fair price.",
+      line1Label: "Bundles shipped",
       line1Value: "4,200+",
-      line2Label: "Fragrances in catalog",
-      line2Value: "30+",
+      line2Label: "Bundles available",
+      line2Value: "10",
       line3Label: "Average rating",
       line3Value: "4.9 / 5",
     },

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter, Cinzel } from "next/font/google";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -14,6 +14,13 @@ const sans = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const brand = Cinzel({
+  variable: "--font-brand",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -37,7 +44,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${display.variable} ${sans.variable} h-full antialiased`}>
+    <html lang="fr" className={`${display.variable} ${sans.variable} ${brand.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-[color:var(--color-bg)] text-[color:var(--color-ink)] grain">
         {children}
       </body>

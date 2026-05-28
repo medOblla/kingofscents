@@ -1,46 +1,110 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import Image from "next/image";
 
 type Stage = "showing" | "opening" | "done";
 
+const MIN_HOLD_MS = 400;
+const ANIM_MS = 400;
+const MAX_TOTAL_MS = 2000;
+
+function subscribeReducedMotion(cb: () => void) {
+  const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mql.addEventListener("change", cb);
+  return () => mql.removeEventListener("change", cb);
+}
+
+function getReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export default function PageLoader() {
+  const reduce = useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotion,
+    () => false,
+  );
   const [stage, setStage] = useState<Stage>("showing");
+  const mountedAt = useRef<number>(0);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (reduce) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const holdMs = reduce ? 100 : 250;
-    const animMs = reduce ? 200 : 350;
-
+    mountedAt.current = performance.now();
     document.body.style.overflow = "hidden";
-    const t1 = window.setTimeout(() => setStage("opening"), holdMs);
-    const t2 = window.setTimeout(() => {
-      setStage("done");
-      document.body.style.overflow = "";
-    }, holdMs + animMs);
+
+    let openTimer = 0;
+    let doneTimer = 0;
+    let capTimer = 0;
+    let onReady: (() => void) | null = null;
+
+    const beginExit = () => {
+      const elapsed = performance.now() - mountedAt.current;
+      const wait = Math.max(0, MIN_HOLD_MS - elapsed);
+      openTimer = window.setTimeout(() => {
+        setStage("opening");
+        doneTimer = window.setTimeout(() => {
+          setStage("done");
+          document.body.style.overflow = "";
+        }, ANIM_MS);
+      }, wait);
+    };
+
+    if (document.readyState === "complete") {
+      beginExit();
+    } else {
+      onReady = beginExit;
+      window.addEventListener("load", onReady, { once: true });
+    }
+
+    // Hard cap: never stuck past MAX_TOTAL_MS even if `load` never fires
+    capTimer = window.setTimeout(() => {
+      if (onReady) window.removeEventListener("load", onReady);
+      beginExit();
+    }, MAX_TOTAL_MS - ANIM_MS);
+
+    const skip = () => {
+      if (onReady) window.removeEventListener("load", onReady);
+      window.clearTimeout(openTimer);
+      window.clearTimeout(capTimer);
+      setStage("opening");
+      doneTimer = window.setTimeout(() => {
+        setStage("done");
+        document.body.style.overflow = "";
+      }, ANIM_MS);
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") skip();
+    };
+    window.addEventListener("pointerdown", skip, { once: true });
+    window.addEventListener("keydown", onKey);
 
     return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
+      if (onReady) window.removeEventListener("load", onReady);
+      window.removeEventListener("pointerdown", skip);
+      window.removeEventListener("keydown", onKey);
+      window.clearTimeout(openTimer);
+      window.clearTimeout(doneTimer);
+      window.clearTimeout(capTimer);
       document.body.style.overflow = "";
     };
-  }, []);
+  }, [reduce]);
 
-  if (stage === "done") return null;
+  if (reduce || stage === "done") return null;
 
   const opening = stage === "opening";
 
   return (
     <div
       aria-hidden
-      className="fixed inset-0 z-[100] pointer-events-none"
-      style={{ contain: "strict" }}
+      className="fixed inset-0 z-[100]"
+      style={{ contain: "strict", pointerEvents: opening ? "none" : "auto" }}
     >
       {/* Top half — slides up on open */}
       <div
-        className="absolute inset-x-0 top-0 h-1/2 bg-[color:var(--color-bg)] transition-transform duration-[350ms] ease-[var(--ease-luxe)] will-change-transform"
+        className="absolute inset-x-0 top-0 h-1/2 bg-[color:var(--color-bg)] transition-transform duration-[400ms] ease-[var(--ease-luxe)] will-change-transform"
         style={{ transform: opening ? "translateY(-100%)" : "translateY(0)" }}
       >
         {/* Subtle gold halo at the splitting edge */}
@@ -49,7 +113,7 @@ export default function PageLoader() {
 
       {/* Bottom half — slides down on open */}
       <div
-        className="absolute inset-x-0 bottom-0 h-1/2 bg-[color:var(--color-bg)] transition-transform duration-[350ms] ease-[var(--ease-luxe)] will-change-transform"
+        className="absolute inset-x-0 bottom-0 h-1/2 bg-[color:var(--color-bg)] transition-transform duration-[400ms] ease-[var(--ease-luxe)] will-change-transform"
         style={{ transform: opening ? "translateY(100%)" : "translateY(0)" }}
       >
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[color:var(--color-gold)]/[0.08] to-transparent" />
@@ -63,7 +127,7 @@ export default function PageLoader() {
 
       {/* Centered logo, fades+lifts away as the panels open */}
       <div
-        className="absolute inset-0 flex items-center justify-center transition-all duration-[300ms] ease-[var(--ease-luxe)]"
+        className="absolute inset-0 flex items-center justify-center transition-all duration-[400ms] ease-[var(--ease-luxe)]"
         style={{
           opacity: opening ? 0 : 1,
           transform: opening ? "scale(1.08)" : "scale(1)",
@@ -71,13 +135,16 @@ export default function PageLoader() {
       >
         <div
           className="flex flex-col items-center gap-4"
-          style={{ animation: "loader-rise 220ms var(--ease-luxe) both" }}
+          style={{ animation: "loader-rise 400ms var(--ease-luxe) both" }}
         >
-          <Crown />
-          <span className="font-display text-3xl sm:text-4xl tracking-wider leading-none">
-            <span className="text-[color:var(--color-gold)] gold-shimmer">king</span>
-            <span className="text-[color:var(--color-ink)]">ofscents</span>
-          </span>
+          <Image
+            src="/img/scentofkings-v2.png"
+            alt="Scent of Kings"
+            width={224}
+            height={224}
+            priority
+            className="h-32 sm:h-40 w-auto"
+          />
           <span className="mt-2 text-[10px] tracking-[0.42em] uppercase text-[color:var(--color-ink-muted)]">
             Luxury, decanted
           </span>
@@ -89,36 +156,7 @@ export default function PageLoader() {
           from { opacity: 0; transform: translateY(10px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes loader-crown-draw {
-          from { stroke-dashoffset: 80; }
-          to   { stroke-dashoffset: 0; }
-        }
       `}</style>
     </div>
-  );
-}
-
-function Crown() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={56}
-      height={56}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.3"
-      className="text-[color:var(--color-gold)]"
-    >
-      <path
-        d="M3 8l4 5 5-8 5 8 4-5v9.5A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5V8z"
-        strokeDasharray="80"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{ animation: "loader-crown-draw 250ms var(--ease-luxe) both" }}
-      />
-      <circle cx="3" cy="8" r="1" fill="currentColor" />
-      <circle cx="21" cy="8" r="1" fill="currentColor" />
-      <circle cx="12" cy="5" r="1" fill="currentColor" />
-    </svg>
   );
 }

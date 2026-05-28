@@ -30,7 +30,7 @@ export default function Reviews({ locale }: { locale: Locale }) {
               key={i}
               className="hover-lift relative rounded-3xl p-7 sm:p-8 bg-[color:var(--color-bg-elev)] border border-[color:var(--color-line)] hover:border-[color:var(--color-gold)]/40 hover:shadow-[0_30px_60px_-20px_rgba(200,160,82,0.18)]"
             >
-              <span className="absolute top-5 right-6 font-display text-[5rem] text-[color:var(--color-gold)]/15 leading-none select-none">"</span>
+              <span className="absolute top-5 right-6 font-display text-[5rem] text-[color:var(--color-gold)]/15 leading-none select-none">&ldquo;</span>
               <Stars />
               <blockquote className="mt-4 text-[color:var(--color-ink)] text-base sm:text-lg leading-relaxed font-display italic">
                 {item.quote}

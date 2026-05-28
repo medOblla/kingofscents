@@ -20,6 +20,7 @@
   /* Typography */
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
+  --font-brand: var(--font-brand);
 
   /* Motion */
   --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
@@ -41,6 +42,11 @@ body {
   font-family: var(--font-display), Georgia, "Times New Roman", serif;
   font-feature-settings: "ss01", "liga", "dlig";
   letter-spacing: -0.01em;
+}
+
+.font-brand {
+  font-family: var(--font-brand), "Trajan Pro", Georgia, serif;
+  letter-spacing: 0.08em;
 }
 
 /* Selection */

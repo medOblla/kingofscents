@@ -1,10 +1,16 @@
+"use client";
+
 import Image from "next/image";
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import { Locale, getDict } from "@/lib/i18n";
 import heroImage from "@/public/img/hero.png";
+
+const easeLuxe = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero({ locale }: { locale: Locale }) {
   const d = getDict(locale).hero;
   const t = getDict(locale).trust;
+  const reduce = useReducedMotion();
   return (
     <section className="relative isolate overflow-hidden pt-28 sm:pt-36 pb-20 sm:pb-32">
       {/* Background field */}
@@ -18,83 +24,127 @@ export default function Hero({ locale }: { locale: Locale }) {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-        <div className="lg:col-span-7">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[color:var(--color-line)] text-[11px] sm:text-xs tracking-[0.18em] uppercase text-[color:var(--color-ink-muted)] animate-float-up">
+        <motion.div
+          className="lg:col-span-7"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: reduce ? 0 : 0.08, delayChildren: 0.05 } },
+          }}
+        >
+          <motion.div
+            variants={fadeUp}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[color:var(--color-line)] text-[11px] sm:text-xs tracking-[0.18em] uppercase text-[color:var(--color-ink-muted)]"
+          >
             <span className="divider-dot" />
             {d.eyebrow}
-          </div>
+          </motion.div>
 
-          <h1 className="mt-6 font-display text-[clamp(2.6rem,7vw,5.6rem)] leading-[0.95] tracking-tight animate-float-up" style={{ animationDelay: "60ms" }}>
-            <span className="block text-[color:var(--color-ink)]">{d.titleA}</span>
-            <span className="block italic text-[color:var(--color-ink-muted)]">{d.titleB}</span>
-            <span className="block gold-shimmer">{d.titleC}</span>
+          <h1 className="mt-6 font-display text-[clamp(2.6rem,7vw,5.6rem)] leading-[0.95] tracking-tight">
+            <TitleLine text={d.titleA} className="text-[color:var(--color-ink)]" />
+            <TitleLine text={d.titleB} className="italic text-[color:var(--color-ink-muted)]" />
+            <TitleLine text={d.titleC} className="gold-shimmer" />
           </h1>
 
-          <p className="mt-7 max-w-xl text-[color:var(--color-ink-muted)] text-base sm:text-lg leading-relaxed animate-float-up" style={{ animationDelay: "120ms" }}>
+          <motion.p
+            variants={fadeUp}
+            className="mt-7 max-w-xl text-[color:var(--color-ink-muted)] text-base sm:text-lg leading-relaxed"
+          >
             {d.sub}
-          </p>
+          </motion.p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-3 animate-float-up" style={{ animationDelay: "180ms" }}>
-            <a
+          <motion.div variants={fadeUp} className="mt-9 flex flex-wrap items-center gap-3">
+            <motion.a
               href="#packs"
-              className="cta-glint group inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] font-medium text-sm tracking-wide hover:bg-[color:var(--color-gold-hi)] transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(200,160,82,0.4)]"
+              whileHover={reduce ? undefined : { scale: 1.04, y: -2 }}
+              whileTap={reduce ? undefined : { scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 360, damping: 22 }}
+              className="cta-glint group inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] font-medium text-sm tracking-wide hover:bg-[color:var(--color-gold-hi)] hover:shadow-[0_20px_40px_-10px_rgba(200,160,82,0.4)]"
             >
               {d.ctaPrimary}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-            </a>
-            <a
-              href="#fragrances"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-[color:var(--color-line)] text-[color:var(--color-ink)] text-sm tracking-wide hover:border-[color:var(--color-gold)]/60 hover:bg-[color:var(--color-accent-soft)] transition-all duration-300"
+            </motion.a>
+            <motion.a
+              href="#story"
+              whileHover={reduce ? undefined : { scale: 1.03, y: -2 }}
+              whileTap={reduce ? undefined : { scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 360, damping: 22 }}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-[color:var(--color-line)] text-[color:var(--color-ink)] text-sm tracking-wide hover:border-[color:var(--color-gold)]/60 hover:bg-[color:var(--color-accent-soft)]"
             >
               {d.ctaSecondary}
-            </a>
-          </div>
+            </motion.a>
+          </motion.div>
+        </motion.div>
 
-          <ul className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs sm:text-sm text-[color:var(--color-ink-muted)] animate-float-up" style={{ animationDelay: "240ms" }}>
-            <li className="inline-flex items-center gap-2">
-              <Check className="w-3.5 h-3.5 text-[color:var(--color-gold)]" /> {d.bulletA}
-            </li>
-            <li className="inline-flex items-center gap-2">
-              <Check className="w-3.5 h-3.5 text-[color:var(--color-gold)]" /> {d.bulletB}
-            </li>
-            <li className="inline-flex items-center gap-2">
-              <Check className="w-3.5 h-3.5 text-[color:var(--color-gold)]" /> {d.bulletC}
-            </li>
-          </ul>
-        </div>
-
-        <div className="lg:col-span-5 relative">
+        <motion.div
+          className="lg:col-span-5 relative"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: easeLuxe, delay: 0.15 }}
+        >
           <HeroVisual locale={locale} />
-          <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 glass rounded-2xl px-4 py-3 max-w-[220px] hidden sm:block">
-            <div className="flex items-center gap-2 text-xs text-[color:var(--color-ink-muted)]">
-              <Stars />
-              <span>4.9 / 5 · 4 200+ packs</span>
-            </div>
-            <div className="mt-1 font-display text-sm text-[color:var(--color-ink)] italic">
-              «{locale === "fr" ? " La meilleure idée parfum au Maroc. " : " The smartest fragrance idea in Morocco. "}»
-            </div>
-          </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Trust strip */}
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 mt-20 sm:mt-28">
         <div className="gold-rule reveal mb-8" />
-        <ul className="reveal-stagger grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5 text-center md:text-left" style={{ ["--stagger" as string]: "90ms" }}>
+        <motion.ul
+          className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-5 text-center md:text-left"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.4 }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.09 } },
+          }}
+        >
           {[
             { i: <Lock className="w-4 h-4" />, t: t.secure },
             { i: <Cash className="w-4 h-4" />, t: t.codAvail },
             { i: <Truck className="w-4 h-4" />, t: t.delivery },
             { i: <Flask className="w-4 h-4" />, t: t.authentic },
           ].map((b, i) => (
-            <li key={i} className="flex items-center gap-3 justify-center md:justify-start text-xs sm:text-sm text-[color:var(--color-ink-muted)]">
+            <motion.li
+              key={i}
+              variants={fadeUp}
+              className="flex items-center gap-3 justify-center md:justify-start text-xs sm:text-sm text-[color:var(--color-ink-muted)]"
+            >
               <span className="text-[color:var(--color-gold)]">{b.i}</span>
               <span>{b.t}</span>
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       </div>
     </section>
+  );
+}
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: easeLuxe } },
+} as const;
+
+function TitleLine({ text, className }: { text: string; className?: string }) {
+  const words = text.split(" ");
+  return (
+    <span className={`block ${className ?? ""}`}>
+      {words.map((w, i) => (
+        <span key={i} className="inline-block overflow-hidden align-baseline pb-[0.05em]">
+          <motion.span
+            className="inline-block will-change-transform"
+            variants={{
+              hidden: { y: "110%" },
+              visible: { y: 0, transition: { duration: 0.8, ease: easeLuxe } },
+            }}
+          >
+            {w}
+            {i < words.length - 1 && " "}
+          </motion.span>
+        </span>
+      ))}
+    </span>
   );
 }
 
@@ -103,8 +153,28 @@ function HeroVisual({ locale }: { locale: Locale }) {
     locale === "fr"
       ? "Trois décants 10 ml de parfums de luxe sur pierre obsidienne, capsules dorées."
       : "Three 10 ml luxury fragrance decants on obsidian stone with brass-gold caps.";
+
+  const reduce = useReducedMotion();
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const rx = useSpring(useTransform(py, [-0.5, 0.5], [8, -8]), { stiffness: 120, damping: 14 });
+  const ry = useSpring(useTransform(px, [-0.5, 0.5], [-8, 8]), { stiffness: 120, damping: 14 });
+
   return (
-    <div className="relative aspect-[4/5] w-full max-w-md mx-auto lg:max-w-none animate-float-up">
+    <motion.div
+      onMouseMove={(e) => {
+        if (reduce) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        px.set((e.clientX - r.left) / r.width - 0.5);
+        py.set((e.clientY - r.top) / r.height - 0.5);
+      }}
+      onMouseLeave={() => {
+        px.set(0);
+        py.set(0);
+      }}
+      style={{ rotateX: reduce ? 0 : rx, rotateY: reduce ? 0 : ry, transformPerspective: 1000 }}
+      className="relative aspect-[4/5] w-full max-w-md mx-auto lg:max-w-none [transform-style:preserve-3d]"
+    >
       <div className="absolute -inset-6 -z-10 bg-[color:var(--color-gold)]/15 blur-3xl rounded-full animate-pulse-glow" />
       <div className="relative h-full w-full overflow-hidden rounded-[32px] border border-white/10 elev-card">
         <div className="absolute inset-0 animate-ken-burns">
@@ -121,7 +191,7 @@ function HeroVisual({ locale }: { locale: Locale }) {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[color:var(--color-bg)]/40 via-transparent to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--color-gold)]/60 to-transparent" />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -129,14 +199,6 @@ function ArrowRight({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function Check({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
-      <path d="M4 12.5l5 5L20 6.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -172,16 +234,5 @@ function Flask({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
       <path d="M9 3h6M10 3v6L5 19a2 2 0 0 0 1.7 3h10.6A2 2 0 0 0 19 19l-5-10V3" />
     </svg>
-  );
-}
-function Stars() {
-  return (
-    <span className="inline-flex">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} viewBox="0 0 24 24" width="14" height="14" fill="#C8A052">
-          <path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z" />
-        </svg>
-      ))}
-    </span>
   );
 }
