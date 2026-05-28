@@ -133,9 +133,11 @@ function TierTeaserCard({
 
           {/* Perks pills (just 2 for brevity) */}
           <div className="flex flex-wrap gap-1.5">
-            <span className="text-[10px] tracking-wider px-2 py-1 rounded-full border border-[color:var(--color-line)] text-[color:var(--color-ink-muted)]">
-              {p.freeShipping}
-            </span>
+            {t.freeShipping && (
+              <span className="text-[10px] tracking-wider px-2 py-1 rounded-full border border-[color:var(--color-line)] text-[color:var(--color-ink-muted)]">
+                {p.freeShipping}
+              </span>
+            )}
             {t.decantMl > 0 && (
               <span className="text-[10px] tracking-wider px-2 py-1 rounded-full border border-[color:var(--color-gold)]/40 text-[color:var(--color-gold)]">
                 {p.freeDecant.replace("{n}", String(t.decantMl))}

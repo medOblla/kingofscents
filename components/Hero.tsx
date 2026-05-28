@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import { Locale, getDict } from "@/lib/i18n";
-import heroImage from "@/public/img/hero.png";
+import heroImage from "@/public/img/hero-package.jpg";
 
 const easeLuxe = [0.22, 1, 0.36, 1] as const;
 
@@ -43,8 +43,8 @@ export default function Hero({ locale }: { locale: Locale }) {
 
           <h1 className="mt-6 font-display text-[clamp(2.6rem,7vw,5.6rem)] leading-[0.95] tracking-tight">
             <TitleLine text={d.titleA} className="text-[color:var(--color-ink)]" />
-            <TitleLine text={d.titleB} className="italic text-[color:var(--color-ink-muted)]" />
-            <TitleLine text={d.titleC} className="gold-shimmer" />
+            <TitleLine text={d.titleB} className="italic text-[color:var(--color-ink)]" />
+            <TitleLine text={d.titleC} className="text-[#C8A052]" />
           </h1>
 
           <motion.p
@@ -151,8 +151,8 @@ function TitleLine({ text, className }: { text: string; className?: string }) {
 function HeroVisual({ locale }: { locale: Locale }) {
   const alt =
     locale === "fr"
-      ? "Trois décants 10 ml de parfums de luxe sur pierre obsidienne, capsules dorées."
-      : "Three 10 ml luxury fragrance decants on obsidian stone with brass-gold caps.";
+      ? "Coffret Scent of Kings — étui cuir fermé et ouvert avec décants 10 ml."
+      : "Scent of Kings discovery set — closed leather case and opened case with 10 ml decants.";
 
   const reduce = useReducedMotion();
   const px = useMotionValue(0);

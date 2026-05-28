@@ -234,7 +234,9 @@ html { scroll-behavior: smooth; }
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: #C8A052;
   animation: shimmer 6s linear infinite;
+  display: inline-block;
 }
 
 /* Reduced motion respect */

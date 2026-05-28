@@ -15,8 +15,8 @@ export type Fragrance = {
 export const fragrances: Record<string, Fragrance> = {
   "ysl-y": {
     id: "ysl-y",
-    name: "Y Eau de Parfum",
-    house: "YSL",
+    name: "MYSLF",
+    house: "Yves Saint Laurent",
     tier: "designer",
     notes: {
       fr: ["Pomme", "Sauge", "Bois de cèdre", "Ambre"],
@@ -132,7 +132,7 @@ export type Tier = {
 export const tiers: Record<TierId, Tier> = {
   royal: { id: "royal", count: 4, price: 399, decantMl: 5, freeShipping: true },
   signature: { id: "signature", count: 3, price: 319, decantMl: 2.5, freeShipping: true },
-  discovery: { id: "discovery", count: 2, price: 189, decantMl: 0, freeShipping: true },
+  discovery: { id: "discovery", count: 2, price: 189, decantMl: 0, freeShipping: false },
 };
 
 export type Bundle = {

@@ -109,7 +109,7 @@ export default function BundleDetail({
               </span>
             </div>
             <div className="mt-1 text-[11px] text-[color:var(--color-gold)]/80">
-              {p.freeShipping}
+              {t.freeShipping ? p.freeShipping : locale === "fr" ? "Livraison 35 DH" : "35 DH delivery"}
               {t.decantMl > 0 &&
                 ` · ${p.freeDecant.replace("{n}", String(t.decantMl))}`}
             </div>
@@ -135,7 +135,7 @@ export default function BundleDetail({
                           : "bg-transparent text-[color:var(--color-ink-muted)] border border-[color:var(--color-line)] hover:border-[color:var(--color-gold)]/50 hover:text-[color:var(--color-ink)]",
                       )}
                     >
-                      {p.bundleNoun} {String(bi + 1).padStart(2, "0")}
+                      {p.bundleNoun} {bi + 1}
                       {b.badgeKey === "gulfDuo" && (
                         <span className="ml-2 text-[10px] opacity-80">
                           {p.gulfDuoBadge}
@@ -548,14 +548,14 @@ function OrderSection({
             </ul>
             <div className="mt-5 pt-4 border-t border-[color:var(--color-line-soft)] space-y-2 text-sm">
               <Row label={t.subtotal} value={`${price} DH`} />
-              <Row label={t.shipping} value={p.freeShipping} faded />
+              <Row label={t.shipping} value={tier.freeShipping ? p.freeShipping : locale === "fr" ? "35 DH" : "35 DH"} faded />
             </div>
             <div className="mt-3 pt-4 border-t border-[color:var(--color-line-soft)] flex items-baseline justify-between">
               <span className="text-[11px] tracking-[0.22em] uppercase text-[color:var(--color-ink-muted)]">
                 {t.total}
               </span>
               <span className="font-display text-3xl text-[color:var(--color-gold)] tabular-nums">
-                {price}
+                {tier.freeShipping ? price : price + 35}
                 <span className="ml-1 text-base text-[color:var(--color-ink-muted)]">DH</span>
               </span>
             </div>
