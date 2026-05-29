@@ -2,7 +2,6 @@ import { Locale, defaultLocale, locales } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
-import HowItWorks from "@/components/HowItWorks";
 import ShopExperience from "@/components/ShopExperience";
 import Story from "@/components/Story";
 import Reviews from "@/components/Reviews";
@@ -23,7 +22,6 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
       <Header locale={lang} />
       <Hero locale={lang} />
       <Marquee locale={lang} />
-      <HowItWorks locale={lang} />
       <ShopExperience locale={lang} />
       <Story locale={lang} />
       <Reviews locale={lang} />

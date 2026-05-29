@@ -162,17 +162,17 @@ export const dict: Record<Locale, Dict> = {
         royal: {
           name: "Royal",
           tagline: "Quatre signatures. Le couronnement.",
-          perks: ["4 × décants 10 ml", "+ décant mystère 5 ml offert", "Livraison offerte", "Pochette de transport"],
+          perks: ["4 × décants 10 ml", "+ décant mystère 5 ml offert", "Livraison offerte", "Pochette cuir au choix"],
         },
         signature: {
           name: "Signature",
           tagline: "Trois parfums pour rythmer la semaine.",
-          perks: ["3 × décants 10 ml", "+ décant mystère 2,5 ml offert", "Livraison offerte", "Pochette de transport"],
+          perks: ["3 × décants 10 ml", "+ décant mystère 2,5 ml offert", "Livraison offerte"],
         },
         discovery: {
           name: "Discovery",
           tagline: "Deux parfums. Le pari malin.",
-          perks: ["2 × décants 10 ml", "Livraison 35 DH", "Pochette de transport"],
+          perks: ["2 × décants 10 ml", "Livraison 35 DH"],
         },
       },
       bundlesHeading: "Bundles {tier}",
@@ -301,17 +301,17 @@ export const dict: Record<Locale, Dict> = {
         royal: {
           name: "Royal",
           tagline: "Four signatures. The crown jewel.",
-          perks: ["4 × 10 ml decants", "+ free 5 ml mystery decant", "Free shipping", "Travel pouch"],
+          perks: ["4 × 10 ml decants", "+ free 5 ml mystery decant", "Free shipping", "Leather travel pouch (choice of colour)"],
         },
         signature: {
           name: "Signature",
           tagline: "Three fragrances to set the week.",
-          perks: ["3 × 10 ml decants", "+ free 2.5 ml mystery decant", "Free shipping", "Travel pouch"],
+          perks: ["3 × 10 ml decants", "+ free 2.5 ml mystery decant", "Free shipping"],
         },
         discovery: {
           name: "Discovery",
           tagline: "Two fragrances. The smart bet.",
-          perks: ["2 × 10 ml decants", "35 DH delivery", "Travel pouch"],
+          perks: ["2 × 10 ml decants", "35 DH delivery"],
         },
       },
       bundlesHeading: "{tier} bundles",

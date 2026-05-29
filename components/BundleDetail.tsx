@@ -18,6 +18,18 @@ import { cn } from "@/lib/cn";
 
 const easeLuxe = [0.22, 1, 0.36, 1] as const;
 
+type PouchColor = "black" | "brown";
+
+const POUCH_IMAGES: Record<PouchColor, string> = {
+  black: "/img/travel-case-black.png",
+  brown: "/img/travel-case-brown.png",
+};
+
+const POUCH_LABEL: Record<PouchColor, Record<Locale, string>> = {
+  black: { fr: "Noir", en: "Black" },
+  brown: { fr: "Brun", en: "Brown" },
+};
+
 export default function BundleDetail({
   locale,
   tierId,
@@ -32,14 +44,16 @@ export default function BundleDetail({
   const tierBundles = bundlesByTier(tierId);
 
   const [activeId, setActiveId] = useState<string>(tierBundles[0].id);
-  const active =
-    tierBundles.find((b) => b.id === activeId) ?? tierBundles[0];
+  const active = tierBundles.find((b) => b.id === activeId) ?? tierBundles[0];
   const fragrances = active.fragrances.map(getFragrance);
   const price = bundlePrice(active);
 
   const reduce = useReducedMotion();
   const isSignature = tierId === "signature";
   const isRoyal = tierId === "royal";
+
+  // Pouch color — only relevant for Royal
+  const [pouchColor, setPouchColor] = useState<PouchColor>("black");
 
   return (
     <article className="relative pt-28 sm:pt-36 pb-20 sm:pb-32">
@@ -57,7 +71,7 @@ export default function BundleDetail({
 
         {/* Top: hero + summary */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Hero carousel — key forces a fresh component (resets slide) on variant change */}
+          {/* Hero carousel */}
           <div className="lg:col-span-7 relative">
             <BundleCarousel
               key={active.id}
@@ -69,6 +83,7 @@ export default function BundleDetail({
               showPopular={isSignature}
               bestValueLabel={p.bestValue}
               popularLabel={p.popular}
+              pouchColor={isRoyal ? pouchColor : undefined}
             />
           </div>
 
@@ -96,22 +111,65 @@ export default function BundleDetail({
               ))}
             </ul>
 
+            {/* ── Pouch color picker (Royal only) ── */}
+            {isRoyal && (
+              <div className="mt-7">
+                <div className="text-[10px] tracking-[0.22em] uppercase text-[color:var(--color-ink-muted)] mb-3">
+                  {locale === "fr" ? "Couleur de la pochette" : "Travel pouch colour"}
+                </div>
+                <div className="flex gap-3">
+                  {(["black", "brown"] as PouchColor[]).map((color) => {
+                    const isActive = pouchColor === color;
+                    return (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => setPouchColor(color)}
+                        aria-pressed={isActive}
+                        className={cn(
+                          "relative flex flex-col items-center gap-2 p-2 rounded-2xl border-2 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-gold)]",
+                          isActive
+                            ? "border-[color:var(--color-gold)] shadow-[0_0_20px_-6px_rgba(200,160,82,0.5)]"
+                            : "border-[color:var(--color-line)] opacity-60 hover:opacity-90 hover:border-[color:var(--color-gold)]/40",
+                        )}
+                      >
+                        <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[color:var(--color-bg-elev)]">
+                          <Image
+                            src={POUCH_IMAGES[color]}
+                            alt={POUCH_LABEL[color][locale]}
+                            fill
+                            sizes="80px"
+                            className="object-contain p-1"
+                          />
+                        </div>
+                        <span className="text-[10px] tracking-[0.16em] uppercase text-[color:var(--color-ink-muted)]">
+                          {POUCH_LABEL[color][locale]}
+                        </span>
+                        {isActive && (
+                          <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[color:var(--color-gold)] flex items-center justify-center">
+                            <Check className="w-2.5 h-2.5 text-[color:var(--color-bg)]" />
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Price + count */}
             <div className="mt-8 flex items-baseline gap-3">
               <span className="font-display text-5xl sm:text-6xl text-[color:var(--color-ink)] tabular-nums leading-none">
                 {price}
               </span>
-              <span className="text-sm text-[color:var(--color-ink-muted)]">
-                DH
-              </span>
+              <span className="text-sm text-[color:var(--color-ink-muted)]">DH</span>
               <span className="ml-2 text-xs tracking-[0.18em] uppercase text-[color:var(--color-ink-muted)]">
                 · {t.count} × 10 ml
               </span>
             </div>
             <div className="mt-1 text-[11px] text-[color:var(--color-gold)]/80">
               {t.freeShipping ? p.freeShipping : locale === "fr" ? "Livraison 35 DH" : "35 DH delivery"}
-              {t.decantMl > 0 &&
-                ` · ${p.freeDecant.replace("{n}", String(t.decantMl))}`}
+              {t.decantMl > 0 && ` · ${p.freeDecant.replace("{n}", String(t.decantMl))}`}
             </div>
 
             {/* Variant pills */}
@@ -137,9 +195,7 @@ export default function BundleDetail({
                     >
                       {p.bundleNoun} {bi + 1}
                       {b.badgeKey === "gulfDuo" && (
-                        <span className="ml-2 text-[10px] opacity-80">
-                          {p.gulfDuoBadge}
-                        </span>
+                        <span className="ml-2 text-[10px] opacity-80">{p.gulfDuoBadge}</span>
                       )}
                     </button>
                   );
@@ -157,11 +213,7 @@ export default function BundleDetail({
                   key={active.id}
                   initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={
-                    reduce
-                      ? { opacity: 0 }
-                      : { opacity: 0, y: -8, transition: { duration: 0.15 } }
-                  }
+                  exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8, transition: { duration: 0.15 } }}
                   transition={{ duration: 0.3, ease: easeLuxe }}
                   className="space-y-4"
                 >
@@ -205,16 +257,17 @@ export default function BundleDetail({
           locale={locale}
           bundle={active}
           price={price}
+          pouchColor={isRoyal ? pouchColor : undefined}
         />
       </div>
 
-      {/* Mobile-only sticky "Order" CTA — jumps to the form */}
-      <StickyOrderCta locale={locale} price={price} />
+      {/* Mobile-only sticky "Order" CTA */}
+      <StickyOrderCta locale={locale} price={tiers[tierId].freeShipping ? price : price + 35} />
     </article>
   );
 }
 
-type Slide = { src: string; alt: string; kind: "composite" | "bottle" };
+type Slide = { src: string; alt: string; kind: "composite" | "bottle" | "pouch" };
 
 function BundleCarousel({
   bundle,
@@ -225,6 +278,7 @@ function BundleCarousel({
   showPopular,
   bestValueLabel,
   popularLabel,
+  pouchColor,
 }: {
   bundle: Bundle;
   fragrances: Fragrance[];
@@ -234,15 +288,26 @@ function BundleCarousel({
   showPopular: boolean;
   bestValueLabel: string;
   popularLabel: string;
+  pouchColor?: PouchColor;
 }) {
   const reduce = useReducedMotion();
-  const slides: Slide[] = [
+
+  const buildSlides = (pc?: PouchColor): Slide[] => [
+    ...(pc
+      ? [
+          {
+            src: POUCH_IMAGES[pc],
+            alt:
+              locale === "fr"
+                ? `Pochette de voyage en cuir ${POUCH_LABEL[pc]["fr"]}`
+                : `${POUCH_LABEL[pc]["en"]} leather travel pouch`,
+            kind: "pouch" as const,
+          },
+        ]
+      : []),
     {
       src: `/img/bundles/${bundle.id}.png`,
-      alt:
-        locale === "fr"
-          ? `Bundle ${tierLabel} — vue d'ensemble`
-          : `${tierLabel} bundle — overview`,
+      alt: locale === "fr" ? `Bundle ${tierLabel} — vue d'ensemble` : `${tierLabel} bundle — overview`,
       kind: "composite",
     },
     ...fragrances.map((f) => ({
@@ -252,12 +317,18 @@ function BundleCarousel({
     })),
   ];
 
+  const [slides, setSlides] = useState<Slide[]>(() => buildSlides(pouchColor));
   const [index, setIndex] = useState(0);
   const total = slides.length;
-  const go = (delta: number) =>
-    setIndex((i) => (i + delta + total) % total);
+  const go = (delta: number) => setIndex((i) => (i + delta + total) % total);
 
-  // Keyboard arrows when carousel area has focus
+  // Update the pouch slide when color changes, preserving current index
+  useEffect(() => {
+    setSlides(buildSlides(pouchColor));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pouchColor]);
+
+  // Keyboard arrows
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
@@ -269,11 +340,13 @@ function BundleCarousel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
 
-  const active = slides[index];
+  const active = slides[index] ?? slides[0];
+  // Key that triggers animation: include pouchColor so pouch slide animates on color change
+  const animKey = `${bundle.id}-${index}-${active.kind === "pouch" ? pouchColor : ""}`;
 
   return (
     <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
-      {/* Thumbnails — horizontal scroll on mobile, vertical column on desktop */}
+      {/* Thumbnails */}
       <div
         className="flex sm:flex-col gap-2 sm:gap-2.5 overflow-x-auto sm:overflow-x-visible sm:overflow-y-auto no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0 sm:max-h-[480px] sm:w-20 shrink-0"
         role="tablist"
@@ -283,7 +356,7 @@ function BundleCarousel({
           const isActive = i === index;
           return (
             <button
-              key={`${bundle.id}-${i}`}
+              key={`${bundle.id}-thumb-${i}-${s.kind === "pouch" ? pouchColor : ""}`}
               type="button"
               onClick={() => setIndex(i)}
               role="tab"
@@ -303,6 +376,10 @@ function BundleCarousel({
                 sizes="80px"
                 className="object-contain"
               />
+              {/* Gold "pouch" dot indicator */}
+              {s.kind === "pouch" && (
+                <span className="absolute bottom-1 right-1 w-2 h-2 rounded-full bg-[color:var(--color-gold)]" />
+              )}
             </button>
           );
         })}
@@ -328,14 +405,10 @@ function BundleCarousel({
 
           <AnimatePresence mode="wait">
             <motion.div
-              key={`${bundle.id}-${index}`}
+              key={animKey}
               initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.02 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={
-                reduce
-                  ? { opacity: 0 }
-                  : { opacity: 0, scale: 0.98, transition: { duration: 0.2 } }
-              }
+              exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98, transition: { duration: 0.2 } }}
               transition={{ duration: 0.35, ease: easeLuxe }}
               className="absolute inset-0 flex items-center justify-center p-6 sm:p-10"
             >
@@ -400,10 +473,7 @@ function StickyOrderCta({ locale, price }: { locale: Locale; price: number }) {
     const target = document.getElementById("order");
     if (!target) return;
     const io = new IntersectionObserver(
-      ([entry]) => {
-        // Hide when the form/summary section is meaningfully in view
-        setShow(!entry.isIntersecting);
-      },
+      ([entry]) => setShow(!entry.isIntersecting),
       { rootMargin: "0px 0px -25% 0px", threshold: 0 },
     );
     io.observe(target);
@@ -444,10 +514,12 @@ function OrderSection({
   locale,
   bundle,
   price,
+  pouchColor,
 }: {
   locale: Locale;
   bundle: Bundle;
   price: number;
+  pouchColor?: PouchColor;
 }) {
   const t = getDict(locale).checkout;
   const p = getDict(locale).packs;
@@ -460,15 +532,11 @@ function OrderSection({
   const [done, setDone] = useState(false);
   const reduce = useReducedMotion();
 
-  const valid =
-    form.name.trim() && form.phone.trim() && form.city.trim() && form.address.trim();
+  const valid = form.name.trim() && form.phone.trim() && form.city.trim() && form.address.trim();
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!valid) {
-      setError(t.requiredHint);
-      return;
-    }
+    if (!valid) { setError(t.requiredHint); return; }
     setError(null);
     setSubmitting(true);
     await new Promise((r) => setTimeout(r, 900));
@@ -488,9 +556,7 @@ function OrderSection({
         <div className="mx-auto w-16 h-16 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] flex items-center justify-center mb-6 shadow-[0_20px_40px_-10px_rgba(200,160,82,0.5)]">
           <Check className="w-7 h-7" />
         </div>
-        <h2 className="font-display text-4xl text-[color:var(--color-ink)]">
-          {t.successTitle}
-        </h2>
+        <h2 className="font-display text-4xl text-[color:var(--color-ink)]">{t.successTitle}</h2>
         <p className="mt-4 text-[color:var(--color-ink-muted)]">{t.successBody}</p>
         <Link
           href={`/${locale}#packs`}
@@ -508,7 +574,7 @@ function OrderSection({
       className="mt-16 sm:mt-24 pt-12 sm:pt-16 border-t border-[color:var(--color-line-soft)]"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-        {/* Summary (left on desktop, top on mobile) */}
+        {/* Summary */}
         <aside className="lg:col-span-5 order-2 lg:order-1">
           <div className="lg:sticky lg:top-24 glass rounded-3xl p-6 sm:p-7 elev-card">
             <div className="text-[11px] tracking-[0.22em] uppercase text-[color:var(--color-gold)]">
@@ -521,10 +587,7 @@ function OrderSection({
               {bundle.fragrances.map((id, i) => {
                 const f = getFragrance(id);
                 return (
-                  <li
-                    key={id}
-                    className="flex items-baseline gap-2 text-[color:var(--color-ink)]"
-                  >
+                  <li key={id} className="flex items-baseline gap-2 text-[color:var(--color-ink)]">
                     <span className="font-display text-xs text-[color:var(--color-gold)]/70 tabular-nums w-5 shrink-0">
                       {String(i + 1).padStart(2, "0")}
                     </span>
@@ -540,15 +603,37 @@ function OrderSection({
               {tier.decantMl > 0 && (
                 <li className="flex items-baseline gap-2 pt-2 border-t border-[color:var(--color-line-soft)] text-[color:var(--color-gold)]">
                   <span className="font-display text-xs w-5 shrink-0">+</span>
-                  <span>
-                    {p.freeDecant.replace("{n}", String(tier.decantMl))}
-                  </span>
+                  <span>{p.freeDecant.replace("{n}", String(tier.decantMl))}</span>
+                </li>
+              )}
+              {/* Pouch line in summary */}
+              {pouchColor && (
+                <li className="flex items-center gap-2 pt-2 border-t border-[color:var(--color-line-soft)]">
+                  <div className="relative w-8 h-8 rounded-md overflow-hidden shrink-0 bg-[color:var(--color-bg-elev)]">
+                    <Image
+                      src={POUCH_IMAGES[pouchColor]}
+                      alt=""
+                      fill
+                      sizes="32px"
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="text-xs text-[color:var(--color-ink-muted)]">
+                    {locale === "fr" ? "Pochette de voyage" : "Travel pouch"}{" "}
+                    <span className="text-[color:var(--color-ink)]">
+                      — {POUCH_LABEL[pouchColor][locale]}
+                    </span>
+                  </div>
                 </li>
               )}
             </ul>
             <div className="mt-5 pt-4 border-t border-[color:var(--color-line-soft)] space-y-2 text-sm">
               <Row label={t.subtotal} value={`${price} DH`} />
-              <Row label={t.shipping} value={tier.freeShipping ? p.freeShipping : locale === "fr" ? "35 DH" : "35 DH"} faded />
+              <Row
+                label={t.shipping}
+                value={tier.freeShipping ? p.freeShipping : locale === "fr" ? "35 DH" : "35 DH"}
+                faded
+              />
             </div>
             <div className="mt-3 pt-4 border-t border-[color:var(--color-line-soft)] flex items-baseline justify-between">
               <span className="text-[11px] tracking-[0.22em] uppercase text-[color:var(--color-ink-muted)]">
@@ -562,65 +647,30 @@ function OrderSection({
           </div>
         </aside>
 
-        {/* Form (right on desktop, bottom on mobile) */}
+        {/* Form */}
         <div className="lg:col-span-7 order-1 lg:order-2">
-          <h2 className="font-display text-3xl sm:text-4xl text-[color:var(--color-ink)]">
-            {t.title}
-          </h2>
-          <p className="mt-2 text-sm text-[color:var(--color-ink-muted)]">
-            {t.sub}
-          </p>
+          <h2 className="font-display text-3xl sm:text-4xl text-[color:var(--color-ink)]">{t.title}</h2>
+          <p className="mt-2 text-sm text-[color:var(--color-ink-muted)]">{t.sub}</p>
 
           <form onSubmit={submit} className="mt-7 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field
-                label={t.name}
-                value={form.name}
-                onChange={(v) => setForm({ ...form, name: v })}
-                autoComplete="name"
-              />
-              <Field
-                label={t.phone}
-                value={form.phone}
-                onChange={(v) => setForm({ ...form, phone: v })}
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                placeholder="06 xx xx xx xx"
-              />
+              <Field label={t.name} value={form.name} onChange={(v) => setForm({ ...form, name: v })} autoComplete="name" />
+              <Field label={t.phone} value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} type="tel" inputMode="tel" autoComplete="tel" placeholder="06 xx xx xx xx" />
             </div>
-            <Field
-              label={t.city}
-              value={form.city}
-              onChange={(v) => setForm({ ...form, city: v })}
-              autoComplete="address-level2"
-              placeholder={t.cityPlaceholder}
-            />
-            <Field
-              label={t.address}
-              value={form.address}
-              onChange={(v) => setForm({ ...form, address: v })}
-              autoComplete="street-address"
-              placeholder={t.addressPlaceholder}
-            />
+            <Field label={t.city} value={form.city} onChange={(v) => setForm({ ...form, city: v })} autoComplete="address-level2" placeholder={t.cityPlaceholder} />
+            <Field label={t.address} value={form.address} onChange={(v) => setForm({ ...form, address: v })} autoComplete="street-address" placeholder={t.addressPlaceholder} />
 
-            {error && (
-              <p role="alert" className="text-sm text-[color:var(--color-danger)]">
-                {error}
-              </p>
-            )}
+            {error && <p role="alert" className="text-sm text-[color:var(--color-danger)]">{error}</p>}
 
             <button
               type="submit"
               disabled={submitting}
               className="cta-glint mt-2 w-full inline-flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium bg-[color:var(--color-gold)] text-[color:var(--color-bg)] hover:bg-[color:var(--color-gold-hi)] shadow-[0_20px_40px_-12px_rgba(200,160,82,0.45)] transition-all"
             >
-              {submitting ? t.placing : `${t.placeOrder} · ${price} DH`}
+              {submitting ? t.placing : `${t.placeOrder} · ${tier.freeShipping ? price : price + 35} DH`}
               {!submitting && <ArrowRight className="w-4 h-4" />}
             </button>
-            <p className="text-[11px] text-center text-[color:var(--color-ink-dim)]">
-              {t.legal}
-            </p>
+            <p className="text-[11px] text-center text-[color:var(--color-ink-dim)]">{t.legal}</p>
           </form>
         </div>
       </div>
@@ -632,80 +682,36 @@ function OrderSection({
  * Helpers
  * ============================================================ */
 
-function Field({
-  label,
-  value,
-  onChange,
-  type = "text",
-  autoComplete,
-  inputMode,
-  placeholder,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
-  autoComplete?: string;
+function Field({ label, value, onChange, type = "text", autoComplete, inputMode, placeholder }: {
+  label: string; value: string; onChange: (v: string) => void;
+  type?: string; autoComplete?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   placeholder?: string;
 }) {
   return (
     <label className="block">
-      <span className="block text-[11px] tracking-[0.18em] uppercase text-[color:var(--color-ink-muted)] mb-1.5">
-        {label}
-      </span>
+      <span className="block text-[11px] tracking-[0.18em] uppercase text-[color:var(--color-ink-muted)] mb-1.5">{label}</span>
       <input
-        type={type}
-        value={value}
-        autoComplete={autoComplete}
-        inputMode={inputMode}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
+        type={type} value={value} autoComplete={autoComplete} inputMode={inputMode}
+        placeholder={placeholder} onChange={(e) => onChange(e.target.value)}
         className="w-full px-4 py-3 rounded-xl bg-[color:var(--color-bg)] border border-[color:var(--color-line)] text-[color:var(--color-ink)] placeholder:text-[color:var(--color-ink-dim)] focus:border-[color:var(--color-gold)]/60 outline-none transition min-h-[48px]"
       />
     </label>
   );
 }
 
-function Row({
-  label,
-  value,
-  faded,
-}: {
-  label: string;
-  value: string;
-  faded?: boolean;
-}) {
+function Row({ label, value, faded }: { label: string; value: string; faded?: boolean }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-[color:var(--color-ink-muted)]">{label}</span>
-      <span
-        className={
-          faded
-            ? "text-[color:var(--color-gold)]"
-            : "text-[color:var(--color-ink)]"
-        }
-      >
-        {value}
-      </span>
+      <span className={faded ? "text-[color:var(--color-gold)]" : "text-[color:var(--color-ink)]"}>{value}</span>
     </div>
   );
 }
 
-function Badge({
-  className,
-  children,
-}: {
-  className?: string;
-  children: React.ReactNode;
-}) {
+function Badge({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
-    <div
-      className={cn(
-        "absolute px-3 py-1.5 rounded-full text-[10px] tracking-[0.22em] uppercase font-medium z-10",
-        className,
-      )}
-    >
+    <div className={cn("absolute px-3 py-1.5 rounded-full text-[10px] tracking-[0.22em] uppercase font-medium z-10", className)}>
       {children}
     </div>
   );
@@ -713,54 +719,14 @@ function Badge({
 
 /* Icons */
 function ArrowRight({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 function ArrowLeft({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M19 12H5M11 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M11 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 function ArrowDown({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M12 5v14M6 13l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M6 13l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 function Check({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.4"
-    >
-      <path d="M4 12.5l5 5L20 6.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M4 12.5l5 5L20 6.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }

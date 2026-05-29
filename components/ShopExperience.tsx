@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Locale, getDict } from "@/lib/i18n";
 import {
@@ -58,6 +59,8 @@ function TierTeaserCard({
 
   const isSignature = tierId === "signature";
   const isRoyal = tierId === "royal";
+
+  const [pouchColor, setPouchColor] = useState<"black" | "brown">("black");
 
   return (
     <motion.div
@@ -123,7 +126,53 @@ function TierTeaserCard({
               {locale === "fr" ? "bundles" : "bundles"}
             </div>
           </div>
+
+          {/* Royal-only: pouch colour picker overlaid bottom-center */}
+          {isRoyal && (
+            <div
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm border border-white/15"
+              onClick={(e) => e.preventDefault()}
+            >
+              {(["black", "brown"] as const).map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPouchColor(color); }}
+                  aria-label={color}
+                  className="relative w-7 h-7 rounded-full overflow-hidden border-2 transition-all duration-300 focus-visible:outline-none"
+                  style={{
+                    borderColor: pouchColor === color ? "var(--color-gold)" : "rgba(255,255,255,0.25)",
+                  }}
+                >
+                  <Image
+                    src={`/img/travel-case-${color}.png`}
+                    alt={color}
+                    fill
+                    sizes="28px"
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
+
+        {/* Royal: live pouch preview strip */}
+        {isRoyal && (
+          <div className="relative overflow-hidden h-24 bg-[color:var(--color-bg-elev)] border-b border-[color:var(--color-line)]">
+            <Image
+              src={`/img/travel-case-${pouchColor}.png`}
+              alt={pouchColor === "black" ? "Black travel pouch" : "Brown travel pouch"}
+              fill
+              sizes="360px"
+              className="object-contain py-2 transition-opacity duration-300"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[color:var(--color-bg-elev)] to-transparent pointer-events-none" />
+            <div className="absolute top-2 right-3 text-[9px] tracking-[0.2em] uppercase text-[color:var(--color-gold)]/80">
+              {locale === "fr" ? "Pochette incluse" : "Pouch included"}
+            </div>
+          </div>
+        )}
 
         {/* Body */}
         <div className="p-5 sm:p-7 flex flex-col gap-4 flex-1">
