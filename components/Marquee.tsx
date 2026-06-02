@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import { Locale, getDict } from "@/lib/i18n";
 
 export default function Marquee({ locale }: { locale: Locale }) {
@@ -12,15 +12,13 @@ export default function Marquee({ locale }: { locale: Locale }) {
   const track = (
     <div className="flex gap-12 sm:gap-16 whitespace-nowrap shrink-0 pr-12 sm:pr-16">
       {repeated.map((label, i) => (
-        <motion.span
+        <span
           key={i}
-          whileHover={reduce ? undefined : { scale: 1.08, color: "var(--color-gold)" }}
-          transition={{ type: "spring", stiffness: 320, damping: 18 }}
-          className="font-display text-2xl sm:text-3xl text-[color:var(--color-ink-muted)]/70 italic cursor-default"
+          className="font-display text-2xl sm:text-3xl text-[color:var(--color-ink-muted)]/70 italic cursor-default transition-[color,transform] duration-200 hover:text-[color:var(--color-gold)] hover:scale-105"
         >
           {label}
           <span className="ml-12 sm:ml-16 text-[color:var(--color-gold)]">·</span>
-        </motion.span>
+        </span>
       ))}
     </div>
   );

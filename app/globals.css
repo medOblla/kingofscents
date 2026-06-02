@@ -35,7 +35,6 @@ body {
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
 .font-display {
@@ -130,8 +129,8 @@ html { scroll-behavior: smooth; }
   to   { transform: scaleX(1); opacity: 1; }
 }
 @keyframes fade-rise {
-  from { opacity: 0; transform: translate3d(0, 28px, 0); filter: blur(6px); }
-  to   { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+  from { opacity: 0; transform: translate3d(0, 28px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 @keyframes fade-rise-soft {
   from { opacity: 0; transform: translate3d(0, 14px, 0); }
@@ -156,17 +155,14 @@ html { scroll-behavior: smooth; }
 .reveal {
   opacity: 0;
   transform: translate3d(0, 24px, 0);
-  filter: blur(4px);
   transition:
-    opacity 900ms var(--ease-luxe),
-    transform 1000ms var(--ease-luxe),
-    filter 700ms var(--ease-luxe);
-  will-change: opacity, transform, filter;
+    opacity 700ms var(--ease-luxe),
+    transform 800ms var(--ease-luxe);
+  will-change: opacity, transform;
 }
 .reveal.is-in {
   opacity: 1;
   transform: translate3d(0, 0, 0);
-  filter: blur(0);
 }
 .reveal-stagger > * {
   opacity: 0;

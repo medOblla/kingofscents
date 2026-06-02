@@ -30,9 +30,9 @@ export default function Hero({ locale }: { locale: Locale }) {
       <div aria-hidden className="absolute inset-0 vignette" />
       <div aria-hidden className="absolute inset-0 -z-10 opacity-60">
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[140%] aspect-square">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-700/20 via-amber-500/10 to-transparent blur-3xl animate-drift" />
-          <div className="absolute inset-20 rounded-full bg-gradient-to-tr from-rose-900/20 via-amber-700/15 to-transparent blur-3xl animate-drift" style={{ animationDelay: "-8s" }} />
-          <div className="absolute inset-40 rounded-full bg-gradient-to-bl from-amber-300/10 via-transparent to-transparent blur-2xl animate-drift" style={{ animationDelay: "-16s" }} />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-700/20 via-amber-500/10 to-transparent blur-3xl animate-drift" style={{ willChange: "transform" }} />
+          <div className="absolute inset-20 rounded-full bg-gradient-to-tr from-rose-900/20 via-amber-700/15 to-transparent blur-3xl animate-drift" style={{ animationDelay: "-8s", willChange: "transform" }} />
+          <div className="absolute inset-40 rounded-full bg-gradient-to-bl from-amber-300/10 via-transparent to-transparent blur-2xl animate-drift" style={{ animationDelay: "-16s", willChange: "transform" }} />
         </div>
       </div>
 
@@ -205,6 +205,7 @@ function HeroCarousel({ locale, reduce }: { locale: Locale; reduce: boolean }) {
               alt={alts[active]}
               priority={active === 0}
               draggable={false}
+              quality={90}
               sizes="(max-width: 640px) 95vw, (max-width: 1024px) 85vw, 1100px"
               style={{ width: "100%", height: "auto", display: "block", pointerEvents: "none" }}
             />
