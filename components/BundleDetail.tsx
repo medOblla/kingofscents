@@ -539,9 +539,30 @@ function OrderSection({
     if (!valid) { setError(t.requiredHint); return; }
     setError(null);
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 900));
-    setSubmitting(false);
-    setDone(true);
+    try {
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          city: form.city.trim(),
+          address: form.address.trim(),
+          bundleId: bundle.id,
+          tier: bundle.tier,
+          fragrances: bundle.fragrances.map((id) => getFragrance(id).name),
+          price,
+          pouchColor: pouchColor ?? null,
+          locale,
+        }),
+      });
+      if (!res.ok) throw new Error("failed");
+      setDone(true);
+    } catch {
+      setError(locale === "fr" ? "Une erreur est survenue. Réessayez." : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (done) {
