@@ -1,21 +1,26 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Brand palette — luxury obsidian + gold */
-  --color-bg: #0B0908;
-  --color-bg-elev: #14110F;
-  --color-bg-elev-2: #1C1916;
-  --color-ink: #F5F1EA;
-  --color-ink-muted: #B8B0A4;
-  --color-ink-dim: #7A7268;
-  --color-line: #2A2521;
-  --color-line-soft: #1F1B18;
-  --color-gold: #C8A052;
-  --color-gold-hi: #E6C77A;
-  --color-gold-lo: #8E6E2C;
-  --color-cream: #F0E6D2;
-  --color-accent-soft: rgba(200, 160, 82, 0.10);
+  /* Brand palette — royal green + polished silver */
+  --color-bg: #0A1410;
+  --color-bg-elev: #0F1F18;
+  --color-bg-elev-2: #16291F;
+  --color-ink: #EDEEF0;
+  --color-ink-muted: #B0B6B3;
+  --color-ink-dim: #6F7672;
+  --color-line: #1F3B2E;
+  --color-line-soft: #162A20;
+  /* Accent tokens retain --color-gold-* names for backwards-compatible utility classes;
+     values are now polished silver / gunmetal. */
+  --color-gold: #C7CDD3;
+  --color-gold-hi: #E5E9ED;
+  --color-gold-lo: #7E8690;
+  --color-cream: #D8DCE0;
+  --color-accent-soft: rgba(199, 205, 211, 0.10);
   --color-danger: #E5484D;
+  /* Royal green tints used for ambient glows */
+  --color-royal: #0F3B2A;
+  --color-royal-hi: #1E5A41;
 
   /* Typography */
   --font-display: var(--font-display);
@@ -78,8 +83,8 @@ html { scroll-behavior: smooth; }
 /* Subtle radial vignette to keep hero focused */
 .vignette {
   background:
-    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(200, 160, 82, 0.12), transparent 70%),
-    radial-gradient(ellipse 100% 80% at 50% 110%, rgba(11, 9, 8, 0.9), transparent 50%);
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(30, 90, 65, 0.22), transparent 70%),
+    radial-gradient(ellipse 100% 80% at 50% 110%, rgba(10, 20, 16, 0.92), transparent 50%);
 }
 
 /* Glass card */
@@ -91,8 +96,8 @@ html { scroll-behavior: smooth; }
 }
 
 .glass-gold {
-  background: linear-gradient(180deg, rgba(200, 160, 82, 0.10), rgba(200, 160, 82, 0.02));
-  border: 1px solid rgba(200, 160, 82, 0.35);
+  background: linear-gradient(180deg, rgba(199, 205, 211, 0.10), rgba(199, 205, 211, 0.02));
+  border: 1px solid rgba(199, 205, 211, 0.35);
 }
 
 /* Focus rings — accessible + luxe */
@@ -223,14 +228,14 @@ html { scroll-behavior: smooth; }
 .animate-marquee { animation: marquee-x 38s linear infinite; }
 .animate-marquee-slow { animation: marquee-x 60s linear infinite; }
 
-/* Gold shimmer text */
+/* Silver shimmer text (class name preserved for compatibility) */
 .gold-shimmer {
-  background: linear-gradient(90deg, #8E6E2C 0%, #E6C77A 25%, #C8A052 50%, #E6C77A 75%, #8E6E2C 100%);
+  background: linear-gradient(90deg, #7E8690 0%, #E5E9ED 25%, #C7CDD3 50%, #E5E9ED 75%, #7E8690 100%);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: #C8A052;
+  color: #C7CDD3;
   animation: shimmer 6s linear infinite;
   display: inline-block;
 }

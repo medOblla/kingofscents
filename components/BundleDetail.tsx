@@ -129,7 +129,7 @@ export default function BundleDetail({
                         className={cn(
                           "relative flex flex-col items-center gap-2 p-2 rounded-2xl border-2 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-gold)]",
                           isActive
-                            ? "border-[color:var(--color-gold)] shadow-[0_0_20px_-6px_rgba(200,160,82,0.5)]"
+                            ? "border-[color:var(--color-gold)] shadow-[0_0_20px_-6px_rgba(199,205,211,0.5)]"
                             : "border-[color:var(--color-line)] opacity-60 hover:opacity-90 hover:border-[color:var(--color-gold)]/40",
                         )}
                       >
@@ -493,7 +493,7 @@ function StickyOrderCta({ locale, price }: { locale: Locale; price: number }) {
         >
           <a
             href="#order"
-            className="cta-glint mx-auto max-w-md flex items-center justify-between gap-3 px-5 py-3.5 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] font-medium text-sm hover:bg-[color:var(--color-gold-hi)] shadow-[0_18px_40px_-12px_rgba(200,160,82,0.6)]"
+            className="cta-glint mx-auto max-w-md flex items-center justify-between gap-3 px-5 py-3.5 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] font-medium text-sm hover:bg-[color:var(--color-gold-hi)] shadow-[0_18px_40px_-12px_rgba(199,205,211,0.6)]"
           >
             <span className="tabular-nums">
               {locale === "fr" ? "Commander" : "Order"} · {price} DH
@@ -574,7 +574,7 @@ function OrderSection({
         transition={{ duration: 0.5, ease: easeLuxe }}
         className="mt-16 sm:mt-24 max-w-2xl mx-auto text-center"
       >
-        <div className="mx-auto w-16 h-16 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] flex items-center justify-center mb-6 shadow-[0_20px_40px_-10px_rgba(200,160,82,0.5)]">
+        <div className="mx-auto w-16 h-16 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] flex items-center justify-center mb-6 shadow-[0_20px_40px_-10px_rgba(199,205,211,0.5)]">
           <Check className="w-7 h-7" />
         </div>
         <h2 className="font-display text-4xl text-[color:var(--color-ink)]">{t.successTitle}</h2>
@@ -686,7 +686,7 @@ function OrderSection({
             <button
               type="submit"
               disabled={submitting}
-              className="cta-glint mt-2 w-full inline-flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium bg-[color:var(--color-gold)] text-[color:var(--color-bg)] hover:bg-[color:var(--color-gold-hi)] shadow-[0_20px_40px_-12px_rgba(200,160,82,0.45)] transition-all"
+              className="cta-glint mt-2 w-full inline-flex items-center justify-center gap-2 py-4 rounded-full text-sm font-medium bg-[color:var(--color-gold)] text-[color:var(--color-bg)] hover:bg-[color:var(--color-gold-hi)] shadow-[0_20px_40px_-12px_rgba(199,205,211,0.45)] transition-all"
             >
               {submitting ? t.placing : `${t.placeOrder} · ${tier.freeShipping ? price : price + 35} DH`}
               {!submitting && <ArrowRight className="w-4 h-4" />}

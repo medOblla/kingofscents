@@ -30,9 +30,9 @@ export default function Hero({ locale }: { locale: Locale }) {
       <div aria-hidden className="absolute inset-0 vignette" />
       <div aria-hidden className="absolute inset-0 -z-10 opacity-60">
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[140%] aspect-square">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-700/20 via-amber-500/10 to-transparent blur-3xl animate-drift" style={{ willChange: "transform" }} />
-          <div className="absolute inset-20 rounded-full bg-gradient-to-tr from-rose-900/20 via-amber-700/15 to-transparent blur-3xl animate-drift" style={{ animationDelay: "-8s", willChange: "transform" }} />
-          <div className="absolute inset-40 rounded-full bg-gradient-to-bl from-amber-300/10 via-transparent to-transparent blur-2xl animate-drift" style={{ animationDelay: "-16s", willChange: "transform" }} />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-900/30 via-emerald-700/15 to-transparent blur-3xl animate-drift" style={{ willChange: "transform" }} />
+          <div className="absolute inset-20 rounded-full bg-gradient-to-tr from-emerald-950/25 via-emerald-700/12 to-transparent blur-3xl animate-drift" style={{ animationDelay: "-8s", willChange: "transform" }} />
+          <div className="absolute inset-40 rounded-full bg-gradient-to-bl from-slate-300/8 via-transparent to-transparent blur-2xl animate-drift" style={{ animationDelay: "-16s", willChange: "transform" }} />
         </div>
       </div>
 
@@ -51,7 +51,7 @@ export default function Hero({ locale }: { locale: Locale }) {
           <h1 className="font-display text-[clamp(2.8rem,7vw,5.8rem)] leading-[0.95] tracking-tight">
             <TitleLine text={d.titleA} className="text-[color:var(--color-ink)]" />
             <TitleLine text={d.titleB} className="italic text-[color:var(--color-ink)]" />
-            <TitleLine text={d.titleC} className="text-[#C8A052]" />
+            <TitleLine text={d.titleC} className="text-[color:var(--color-gold)]" />
           </h1>
         </motion.div>
 
@@ -88,7 +88,7 @@ export default function Hero({ locale }: { locale: Locale }) {
               whileHover={reduce ? undefined : { scale: 1.04, y: -2 }}
               whileTap={reduce ? undefined : { scale: 0.97 }}
               transition={{ type: "spring", stiffness: 360, damping: 22 }}
-              className="cta-glint group inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] font-medium text-sm tracking-wide hover:bg-[color:var(--color-gold-hi)] hover:shadow-[0_20px_40px_-10px_rgba(200,160,82,0.4)]"
+              className="cta-glint group inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] font-medium text-sm tracking-wide hover:bg-[color:var(--color-gold-hi)] hover:shadow-[0_20px_40px_-10px_rgba(199,205,211,0.4)]"
             >
               {d.ctaPrimary}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />

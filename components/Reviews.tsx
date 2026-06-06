@@ -28,7 +28,7 @@ export default function Reviews({ locale }: { locale: Locale }) {
           {r.items.map((item, i) => (
             <figure
               key={i}
-              className="hover-lift relative rounded-3xl p-7 sm:p-8 bg-[color:var(--color-bg-elev)] border border-[color:var(--color-line)] hover:border-[color:var(--color-gold)]/40 hover:shadow-[0_30px_60px_-20px_rgba(200,160,82,0.18)]"
+              className="hover-lift relative rounded-3xl p-7 sm:p-8 bg-[color:var(--color-bg-elev)] border border-[color:var(--color-line)] hover:border-[color:var(--color-gold)]/40 hover:shadow-[0_30px_60px_-20px_rgba(199,205,211,0.18)]"
             >
               <span className="absolute top-5 right-6 font-display text-[5rem] text-[color:var(--color-gold)]/15 leading-none select-none">&ldquo;</span>
               <Stars />
@@ -56,7 +56,7 @@ function Stars() {
   return (
     <span className="inline-flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} viewBox="0 0 24 24" width="14" height="14" fill="#C8A052">
+        <svg key={i} viewBox="0 0 24 24" width="14" height="14" fill="#C7CDD3">
           <path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18 22l-6-3.6L6 22l1.5-7.2L2 10l7.1-1.1z" />
         </svg>
       ))}

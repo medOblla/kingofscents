@@ -42,6 +42,10 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
+export const viewport = {
+  themeColor: "#0A1410",
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${display.variable} ${sans.variable} ${brand.variable} h-full antialiased`}>

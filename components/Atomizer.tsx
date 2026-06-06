@@ -62,7 +62,7 @@ export function Atomizer({
       <span
         className={cn("block rounded-t-sm", s.cap)}
         style={{
-          background: "linear-gradient(180deg, #E6C77A 0%, #C8A052 60%, #8E6E2C 100%)",
+          background: "linear-gradient(180deg, #E5E9ED 0%, #C7CDD3 60%, #7E8690 100%)",
           boxShadow: "0 1px 0 rgba(255,255,255,0.15) inset, 0 -1px 0 rgba(0,0,0,0.3) inset",
         }}
       />
@@ -70,7 +70,7 @@ export function Atomizer({
       <span
         className={cn("block -mt-px rounded-sm", s.collar)}
         style={{
-          background: "linear-gradient(180deg, #C8A052 0%, #8E6E2C 100%)",
+          background: "linear-gradient(180deg, #C7CDD3 0%, #7E8690 100%)",
         }}
       />
       {/* Body */}

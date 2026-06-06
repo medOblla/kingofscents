@@ -71,7 +71,7 @@ function TierTeaserCard({
       className={cn(
         "relative rounded-3xl border bg-[color:var(--color-bg-elev)] elev-card overflow-hidden flex flex-col",
         isSignature
-          ? "border-[color:var(--color-gold)]/50 shadow-[0_30px_60px_-20px_rgba(200,160,82,0.25)]"
+          ? "border-[color:var(--color-gold)]/50 shadow-[0_30px_60px_-20px_rgba(199,205,211,0.25)]"
           : "border-[color:var(--color-line)]",
       )}
     >
@@ -207,7 +207,7 @@ function TierTeaserCard({
                 </span>
               </div>
             </div>
-            <span className="cta-glint shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] text-sm font-medium group-hover:bg-[color:var(--color-gold-hi)] shadow-[0_14px_30px_-12px_rgba(200,160,82,0.55)] transition-colors">
+            <span className="cta-glint shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[color:var(--color-gold)] text-[color:var(--color-bg)] text-sm font-medium group-hover:bg-[color:var(--color-gold-hi)] shadow-[0_14px_30px_-12px_rgba(199,205,211,0.55)] transition-colors">
               {p.exploreCta}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </span>
